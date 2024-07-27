@@ -1,0 +1,36 @@
+.program hello
+    pull noblock
+    out y, 32
+
+.wrap_target
+    mov x, y
+    set pins, 1
+
+lp1:
+    jmp x-- lp1
+    set pins, 0
+    mov x, y
+
+lp2:
+    jmp x-- lp2
+
+.wrap
+
+% c-sdk {
+void init_sm_pin(PIO pio, uint sm, uint offset, uint pin) {
+    // Initialize the specified GPIO pin for PIO control
+    pio_gpio_init(pio, pin);
+    // Set the specified pin as an output pin
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    
+    // Get the default configuration for the PIO program
+    pio_sm_config c = hello_program_get_default_config(offset);
+    // Configure the state machine to control the specified pin
+    sm_config_set_set_pins(&c, pin, 1);
+    
+    // Initialize the state machine with the specified configuration
+    pio_sm_init(pio, sm, offset, &c);
+    // Enable the state machine
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
