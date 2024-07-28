@@ -11,6 +11,7 @@ target_link_libraries(hello_pio PRIVATE
         hardware_pio
         hardware_adc
         hardware_pwm
+        hardware_spi
         )
 
         # Enable USB serial output
