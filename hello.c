@@ -10,7 +10,7 @@
 #include "hello.pio.h"
 
 #define VMAX 4.0            // Maximum output voltage for the DAC
-float factor = VMAX / 15992.0; // Just to save some CPU time here
+float factor = VMAX / 15992.0;
 #define SPI_PORT spi0
 #define PIN_SCK 2
 #define PIN_MOSI 3
@@ -30,10 +30,12 @@ int main() {
     stdio_init_all();
 
     // Initialize SPI
-    spi_init(SPI_PORT, 10000000);  // 10 MHz
+    spi_init(SPI_PORT, 1000000);  // 1 MHz
+    // Set SPI format to 8 bits
+    spi_set_format(SPI_PORT, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    // Initialize SPI GPIO pins
     gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
     gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
-    
     // Initialize CS pin
     gpio_init(PIN_CS);
     gpio_set_dir(PIN_CS, GPIO_OUT);
@@ -73,9 +75,9 @@ void set_range(float freq) {
     uint16_t value = (uint16_t)((((freq - 8) * factor) / VMAX) * 4095);  // 12-bit value
 
     // MCP4822 command: Write to DAC A, buffer off, gain = 1x, active mode
-    uint8_t dac_cmd = 0b00010000;  // 0b00010000: A/B = 0, Buffer = 0, Gain x 2 = 0, Shutdown = 1
-    uint8_t high_byte = (dac_cmd << 4) | (value >> 8);
-    uint8_t low_byte = value & 0xFF;
+    uint16_t command = 0b0001000000000000 | (value & 0x0FFF);  // 0b0001: Output A = 0, Dont Care = 0, 2 x Gain = 0, Shutdown off = 1
+    uint8_t high_byte = command >> 8;
+    uint8_t low_byte = command & 0xFF;
 
     gpio_put(PIN_CS, 0);  // CS low
     spi_write_blocking(SPI_PORT, &high_byte, 1);
