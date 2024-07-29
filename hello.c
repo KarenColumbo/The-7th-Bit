@@ -43,11 +43,10 @@ void set_frequency(PIO pio, uint sm, float freq) {
 }
 
 void set_range(uint8_t dacpin, uint16_t freq) {
-    float charge_voltage = VMAX * freq / 15992;
-    uint16_t charge = (charge_voltage / VMAX) * 4095; 
+    float charge_voltage = VMAX * freq / 15992; // keep the range between 8 Hz and 16 kHz
+    uint16_t charge = (charge_voltage / VMAX) * 4095; // thea.codes' formula - tested between 8 - 400 Hz
     //uint16_t value = (uint16_t)((((freq - 8) * factor) / VMAX) * 4095);  // 12-bit value
-    // MCP4822 command: Write to DAC A, gain = 2x, active mode
-    uint16_t command = 0b0001000000000000 | (charge & 0x0FFF);  // 0b00100000 = A/B = 0, Gain = 0 (2x), Shutdown = 1
+    uint16_t command = 0b0001000000000000 | (charge & 0x0FFF);  // 0b001: Channel A = 0, not used = 0, Gain x 2 = 0, Shutdown off = 1
     uint8_t high_byte = command >> 8;
     uint8_t low_byte = command & 0xFF;
 
