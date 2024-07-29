@@ -10,7 +10,7 @@
 #include "hello.pio.h"
 
 #define VMAX 4.096            // Maximum output voltage for the DAC
-float factor = VMAX / 15992.0;
+float factor = VMAX / 15992.0; // DAC starting at 0 volts
 #define SPI_PORT spi0
 #define PIN_SCK 2
 #define PIN_MOSI 3
