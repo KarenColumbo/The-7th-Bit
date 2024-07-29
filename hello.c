@@ -74,7 +74,6 @@ void set_range(float freq) {
     // Normalize voltage to 12-bit DAC value
     uint16_t value = (uint16_t)((((freq - 8) * factor) / VMAX) * 4095);  // 12-bit value
 
-    // MCP4822 command: Write to DAC A, buffer off, gain = 1x, active mode
     uint16_t command = 0b0001000000000000 | (value & 0x0FFF);  // 0b0001: Output A = 0, Dont Care = 0, 2 x Gain = 0, Shutdown off = 1
     uint8_t high_byte = command >> 8;
     uint8_t low_byte = command & 0xFF;
