@@ -9,7 +9,7 @@
 #include "hardware/clocks.h"
 #include "hello.pio.h"
 
-#define VMAX 4.0            // Maximum output voltage for the DAC
+#define VMAX 4.096            // Maximum output voltage for the DAC
 float factor = VMAX / 15992.0;
 #define SPI_PORT spi0
 #define PIN_SCK 2
