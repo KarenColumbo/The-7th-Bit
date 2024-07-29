@@ -43,9 +43,11 @@ void set_frequency(PIO pio, uint sm, float freq) {
 }
 
 void set_range(uint8_t dacpin, uint16_t freq) {
-    uint16_t value = (uint16_t)((((freq - 8) * factor) / VMAX) * 4095);  // 12-bit value
+    float charge_voltage = VMAX * freq / 15992;
+    uint16_t charge = (charge_voltage / VMAX) * 4095; 
+    //uint16_t value = (uint16_t)((((freq - 8) * factor) / VMAX) * 4095);  // 12-bit value
     // MCP4822 command: Write to DAC A, gain = 2x, active mode
-    uint16_t command = 0b0001000000000000 | (value & 0x0FFF);  // 0b00100000 = A/B = 0, Gain = 0 (2x), Shutdown = 1
+    uint16_t command = 0b0001000000000000 | (charge & 0x0FFF);  // 0b00100000 = A/B = 0, Gain = 0 (2x), Shutdown = 1
     uint8_t high_byte = command >> 8;
     uint8_t low_byte = command & 0xFF;
 
@@ -77,7 +79,7 @@ int main() {
     init_sm(pio[VOICE_TO_PIO], VOICE_TO_SM, offset[VOICE_TO_PIO], RESET_PIN);
 
     while (1) {
-        for (int testfreq = 8; testfreq <= 6000; testfreq += 250) {
+        for (int testfreq = 8; testfreq <= 400; testfreq += 25) {
             set_frequency(pio[0], VOICE_TO_SM, (float)testfreq);
             set_range(PIN_CS0, testfreq);  // Set voltage value
             printf("Setting voltage for frequency %d\n", testfreq);
