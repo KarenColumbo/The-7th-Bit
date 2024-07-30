@@ -14,7 +14,7 @@
 #define PIN_MOSI 3
 #define PIN_CS0 5
 #define VMAX 3.3            // Maximum output voltage for the DAC
-float factor = VMAX / 15992.0;
+float factor = VMAX / 15992.0; // Save poor wee Pico some calc cycles
 
 const uint8_t RESET_PIN = 15;
 const uint8_t VOICE_TO_PIO = 0;
