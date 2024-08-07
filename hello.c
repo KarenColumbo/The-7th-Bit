@@ -39,7 +39,7 @@ void init_sm(PIO pio, uint sm, uint offset, uint pin) {
 }
 
 void set_ramp_frequency(PIO pio, uint sm, float ramp_freq) {
-    float clock_freq = ramp_freq * 256;
+    float clock_freq = ramp_freq * 128;
     uint32_t clk_div = clock_get_hz(clk_sys) / 2 / clock_freq;
     if (clock_freq == 0) clk_div = 0;
     pio_sm_put_blocking(pio, sm, clk_div);
@@ -47,15 +47,31 @@ void set_ramp_frequency(PIO pio, uint sm, float ramp_freq) {
     pio_sm_exec(pio, sm, pio_encode_out(pio_y, 32));
 }
 
+/*
+// Function to generate the major scale starting from a given MIDI note
+void generate_major_scale(int start_note, int *scale) {
+    int intervals[] = {2, 2, 1, 2, 2, 2, 1};
+    scale[0] = start_note;
+    for (int i = 0; i < 7; ++i) {
+        start_note += intervals[i];
+        scale[i + 1] = start_note;
+    }
+}
+*/
 int main() {
     stdio_init_all();
     uint offset = pio_add_program(pio[0], &hello_program);
     init_sm(pio[VOICE_TO_PIO_1], VOICE_TO_SM_1, offset, CLOCK_PIN_1);
+    set_ramp_frequency(pio[0], VOICE_TO_SM_1, 300);
 
     while (1) {
-        for (int i = 0; i <= 127; i++) {
-            set_ramp_frequency(pio[0], VOICE_TO_SM_1, (float)midi_frequencies[i]);
-            sleep_ms(5000);  
+        /*
+        for (int i = 12; i <= 108; ++i) {
+            set_ramp_frequency(pio[0], VOICE_TO_SM_1, midi_frequencies[i]);
+            sleep_ms(250);
         }
+        */
     }
+
+    return 0;
 }
