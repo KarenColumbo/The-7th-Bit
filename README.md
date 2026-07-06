@@ -1,4 +1,4 @@
-4040 binary counter VCO, RPi Pico-controlled.
+4040 binary counter VCO, RPi Pico-controlled. Very early alpha, needs MIDI playability. 
 
 I really want a ramp wave of consistent amplitude (10 Vpp) and quality throughout the full freq range (8 Hz - 16 kHz). Couldn't get this out of the usual analogue suspects without fine-tuning, pot-trimming and fine-tuning again - and, of course, a really huge part count. So the trusty old 4040 binary counter seems to be the way to go. Using 7 outputs it generates a somewhat smooth and etxremely stable ramp wave (128 steps, I think) that can be treated like coming from any analog VCO.
 
